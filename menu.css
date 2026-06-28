@@ -1,0 +1,370 @@
+/* ==========================================================
+   PROGRAMANDO CON JAVASCRIPT — sala de juegos
+   Concepto: stickers de cómic, colores reales de cada juego.
+   ========================================================== */
+
+:root {
+    --ink: #2b2230;
+    --cream: #ffffff;
+
+    /* paleta "Cazando" (pasto, crema, huellitas) */
+    --cazando-bg: #fbe9c9;
+    --cazando-bg-2: #f6dca3;
+    --cazando-border: #6f4e2e;
+    --cazando-accent: #e9943a;
+    --cazando-leaf: #7bb045;
+
+    /* paleta "Atrapar Limones" (noche, neón) */
+    --limones-bg: #0f2a47;
+    --limones-bg-2: #163a5e;
+    --limones-border: #cdf24a;
+    --limones-accent: #ffd23f;
+
+    /* fondo general de la página */
+    --page-grad-1: #fff3da;
+    --page-grad-2: #ffd9e6;
+    --page-grad-3: #bfe9ff;
+
+    --font-display: "Baloo 2", "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, var(--page-grad-1) 0%, var(--page-grad-2) 55%, var(--page-grad-3) 100%);
+}
+
+/* ---------- decoración flotante ---------- */
+.floaties {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.floaties span {
+    position: absolute;
+    font-size: 2.4rem;
+    opacity: 0.22;
+    animation: float-bob 6s ease-in-out infinite;
+}
+
+.floaties span:nth-child(2n) {
+    animation-duration: 7.5s;
+    animation-delay: -2s;
+}
+
+.floaties span:nth-child(3n) {
+    animation-duration: 5s;
+    animation-delay: -1s;
+}
+
+@keyframes float-bob {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-16px) rotate(8deg);
+    }
+}
+
+/* ---------- hero ---------- */
+.hero {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 2rem;
+    text-align: center;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: var(--cream);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    padding: 0.4rem 1.1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 4px 4px 0 var(--ink);
+    margin: 0 0 1.4rem;
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 5.5vw, 3rem);
+    line-height: 1.3;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.word {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    border-radius: 14px;
+    border: 3px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    transform: rotate(var(--tilt, 0deg));
+}
+
+.word--pink {
+    background: #ff8fab;
+    --tilt: -2deg;
+}
+
+.word--yellow {
+    background: #ffd23f;
+    --tilt: 2deg;
+}
+
+.word--blue {
+    background: #7fd6ff;
+    --tilt: -1deg;
+}
+
+.hero-sub {
+    color: #4a3f52;
+    font-size: 1.02rem;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+/* ---------- sección proyectos ---------- */
+main {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 5rem;
+}
+
+.section-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    text-align: center;
+    margin: 1.5rem 0 2.2rem;
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 720px) {
+    .game-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- tarjetas de juego ---------- */
+.game-card {
+    position: relative;
+    border-radius: 22px;
+    border: 4px solid var(--ink);
+    padding: 1.9rem 1.7rem 2rem;
+    box-shadow: 8px 8px 0 var(--ink);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    overflow: hidden;
+}
+
+.game-card:hover,
+.game-card:focus-within {
+    transform: translate(-4px, -6px) rotate(-0.6deg);
+    box-shadow: 12px 12px 0 var(--ink);
+}
+
+.card-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Cazando: crema + pasto */
+.game-card--cazando {
+    background: linear-gradient(180deg, var(--cazando-bg) 0%, var(--cazando-bg-2) 100%);
+}
+
+.game-card--cazando .card-glow {
+    background:
+        radial-gradient(circle at 92% 12%, rgba(123, 176, 69, 0.35) 0 14px, transparent 15px),
+        radial-gradient(circle at 8% 88%, rgba(123, 176, 69, 0.3) 0 12px, transparent 13px);
+}
+
+.game-card--cazando .game-title {
+    color: var(--cazando-border);
+}
+
+.game-card--cazando .game-tagline {
+    color: var(--cazando-accent);
+}
+
+/* Atrapar Limones: noche + neón */
+.game-card--limones {
+    background: linear-gradient(180deg, var(--limones-bg) 0%, var(--limones-bg-2) 100%);
+    border-color: var(--limones-border);
+    color: #eaf6ff;
+}
+
+.game-card--limones .card-glow {
+    background:
+        radial-gradient(circle at 90% 10%, rgba(205, 242, 74, 0.25) 0 16px, transparent 17px),
+        radial-gradient(circle at 10% 90%, rgba(255, 210, 63, 0.2) 0 14px, transparent 15px);
+}
+
+.game-card--limones .game-title {
+    color: var(--limones-border);
+    text-shadow: 0 0 10px rgba(205, 242, 74, 0.45);
+}
+
+.game-card--limones .game-tagline {
+    color: var(--limones-accent);
+}
+
+.game-card--limones .game-desc {
+    color: #c9dcec;
+}
+
+/* contenido común de la tarjeta */
+.card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.mascot {
+    font-size: 2.6rem;
+    display: inline-block;
+    animation: mascot-wiggle 3.4s ease-in-out infinite;
+}
+
+.bowl,
+.star {
+    font-size: 1.6rem;
+    opacity: 0.9;
+}
+
+@keyframes mascot-wiggle {
+    0%,
+    100% {
+        transform: rotate(-4deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+.game-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.55rem;
+    margin: 0.2rem 0 0.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.game-tagline {
+    font-weight: 700;
+    font-size: 0.92rem;
+    margin: 0 0 0.8rem;
+    position: relative;
+    z-index: 1;
+}
+
+.game-desc {
+    font-size: 0.93rem;
+    line-height: 1.55;
+    color: #5a4d62;
+    margin: 0 0 1.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.play-btn {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+    color: var(--ink);
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.play-btn:hover {
+    filter: brightness(1.06);
+}
+
+.play-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 var(--ink);
+}
+
+.play-btn:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.play-btn--cazando {
+    background: var(--cazando-accent);
+}
+
+.play-btn--limones {
+    background: var(--limones-accent);
+    border-color: var(--limones-border);
+    box-shadow: 4px 4px 0 var(--limones-border);
+}
+
+.play-btn--limones:active {
+    box-shadow: 0 0 0 var(--limones-border);
+}
+
+/* ---------- footer ---------- */
+.site-footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: 0.88rem;
+    color: #5a4d62;
+    padding: 0 1.5rem 3rem;
+}
