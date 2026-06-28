@@ -1,0 +1,3 @@
+ya ahora solo hay un pequeño cambio quiero que me indique donde esta la funcion del texto ;
+¡Bienvenido a mi sala de juegos! Acá viven los videojuegos que construí mientras aprendía JS 🎮
+para agrandarle un poco y bajarle un poquito mas
